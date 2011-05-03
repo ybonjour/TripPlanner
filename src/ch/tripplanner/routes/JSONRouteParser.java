@@ -1,23 +1,12 @@
 package ch.tripplanner.routes;
 
-import junit.framework.Assert;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.location.Location;
 
 public class JSONRouteParser implements RouteParser {
-	/*
-	 * "{\"status\":\"OK\",\"route\":{\"startLongitude\":\"" + start.getLongitude() + "\","
-		+ "\"startLatitude\":\"" + start.getLatitude() + "\","
-		+ "\"destinationLongitude\":\"" + destination.getLongitude() + "\","
-		+ "\"destinationLatitude\":\"" + destination.getLatitude() + "\","
-		+ "\"type\":\"" + type + "\","
-		+ "\"duration\":\"" + duration + "\"}}";
-	 */
-	
-	
+
 	private static final String NAME_STATUS = "status";
 	private static final String NAME_ROUTE = "route";
 	private static final String NAME_START_LONGITUDE = "startLongitude";
@@ -46,12 +35,13 @@ public class JSONRouteParser implements RouteParser {
 			return this.mJSON.getString(NAME_STATUS).equals(STATUS_OK);
 		}
 		catch(JSONException e){
-			return false;
+			//TODO: Error handling
+			throw new RuntimeException(e);
 		}
 	}
 	
 	public Route parseRoute() {	
-		Assert.assertTrue(isStatusOk());
+		if(!isStatusOk()) throw new RuntimeException("No correct route. Please check isStatusOk() before calling parseRoute()");
 		
 		Route result;
 		try{
@@ -61,7 +51,8 @@ public class JSONRouteParser implements RouteParser {
 					getDestinationLocation(route),
 					getDuration(route));
 		}catch(JSONException e){
-			result = null;
+			//TODO: error handling
+			throw new RuntimeException(e);
 		}
 
 		return result;
